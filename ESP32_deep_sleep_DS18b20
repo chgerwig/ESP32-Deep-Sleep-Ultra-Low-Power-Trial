@@ -47,7 +47,7 @@ void setup() {
   Serial.println("Battery: " + String(temp)); 
  
   esp_deep_sleep_enable_timer_wakeup(UpdateInterval);
-  BME280_Sleep();
+
   Serial.println("Going to sleep now...");
   esp_deep_sleep_start();
 }
@@ -56,31 +56,3 @@ void loop() {
   //Do nothing as it will never get here!
 }
 
-void UpdateThingSpeak(String DataForUpload) {
-  WiFiClient client;
-  if (!client.connect(ThingSpeakAddress, 80)) {
-     Serial.println("connection failed");
-     return;
-  }
-  else
-  {
-    Serial.println(DataForUpload);
-    client.print("POST /update HTTP/1.1\n");
-    client.print("Host: api.thingspeak.com\n");
-    client.print("Connection: close\n");
-    client.print("X-THINGSPEAKAPIKEY: " + api_key + "\n");
-    client.print("Content-Type: application/x-www-form-urlencoded\n");
-    client.print("Content-Length: ");
-    client.print(DataForUpload.length());
-    client.print("\n\n");
-    client.print(DataForUpload);
-  }
-  client.stop();
-}
-
-void BME280_Sleep() {
-  //Serial.println("BME280 to Sleep mode");
-  Wire.beginTransmission(0x76); // Check your I2C address, they vary, could be 0x77
-  Wire.write((uint8_t)BME280_REGISTER_CONTROL);
-  Wire.write((uint8_t)0b00);
-  Wire.end
